@@ -1,16 +1,17 @@
 <template>
     <div class="hello" id="app">
-        <h1>
-            {{ title }}
-            <span class="info">({{ uncheckedNumber.length }}/{{ todoList.length }})</span>
-        </h1>
-        <ul v-if="todoList.length">
-            <li v-for="(todo, index) in todoList">
-                <input type="checkbox" v-bind:checked="todo.done" @click="todo.done = !todo.done">
-                <label :class="{done: todo.done}">{{todo.task}}</label>
-                <span @click="deleteItem(index)" class="command">[x]</span>
-            </li>
-        </ul>
+        <v-list two-line subheader v-if="todoList.length">
+            <v-subheader>Task List ({{ uncheckedNumber.length }}/{{ todoList.length }})</v-subheader>
+            <v-list-tile href="javascript:;" v-for="(todo, index) in todoList" :key="index">
+                <v-list-tile-action>
+                    <v-checkbox v-model="todo.done"></v-checkbox>
+                </v-list-tile-action>
+                <v-list-tile-content @click="todo.done = !todo.done">
+                    <v-list-tile-title :class="{done: todo.done}">{{todo.task}}</v-list-tile-title>
+                    <v-list-tile-sub-title>{{todo.description}}</v-list-tile-sub-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </v-list>
         <ul v-else>
             <li>Task is nothing ...</li>
         </ul>
@@ -22,6 +23,12 @@
                     :counter="15"
                     label="Task"
                     required
+            ></v-text-field>
+            <v-text-field
+                    v-model="description"
+                    :rules="descriptionRules"
+                    :counter="15"
+                    label="Description"
             ></v-text-field>
             <v-btn color="success" @click="addItem" :disabled="!valid" type="submit">Add task</v-btn>
             <v-btn color="error" @click="deleteChecked">Delete checked task</v-btn>
@@ -40,10 +47,13 @@
         valid: false,
         alert: false,
         newItem: '',
-        title: 'My ToDo',
+        description: '',
         todoList: [],
         taskRules: [
           v => !!v || 'Task is required',
+          v => (v && v.length <= 15) || 'Task must be less than 15 characters'
+        ],
+        descriptionRules: [
           v => (v && v.length <= 15) || 'Task must be less than 15 characters'
         ],
       }
@@ -59,6 +69,7 @@
         }
         this.todoList.push({
           task: this.newItem,
+          description: this.description,
           done: false
         })
 
@@ -123,22 +134,6 @@
 
     #app form input, #app form button {
         padding: 0px 2px;
-    }
-
-    .command {
-        font-size: 12px;
-        cursor: pointer;
-        color: #08c;
-    }
-
-    #app ul {
-        padding: 0;
-        list-style: none;
-    }
-
-    #app li > label.done {
-        text-decoration: line-through !important;
-        color: #bbb;
     }
 
     .info {

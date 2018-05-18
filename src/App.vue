@@ -33,7 +33,7 @@
       </v-container>
     </v-content>
     <v-footer color="dark" dark app>
-      <span class="white--text">&copy; 2017 Motoki Sakashita</span>
+      <span class="white--text">&copy; 2018 Soysauce</span>
     </v-footer>
   </v-app>
 </template>
